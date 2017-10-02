@@ -53,11 +53,7 @@ SPI_HandleTypeDef hspi3;
 
 /* USER CODE END PV */
 
-/* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-static void MX_SPI3_Init(void);
-static void MX_ADC1_Init(void);
+
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -190,7 +186,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-volatile double result = s * t;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -236,19 +232,24 @@ volatile double result = s * t;
   SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufClear, sizeof(SPIBufClear), 10);
   HAL_Delay(1000);
 
-  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
-  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
-  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
-  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
-  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
-  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
-  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
-  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
-  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
+  if(SPI_Status == HAL_OK)
+  {
+	  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
+	  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
+	  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
+	  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
+	  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
+	  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
+	  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
+	  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
+	  SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
+  }
+
 
 
 while (1)
 {
+
   HAL_Delay(500);
 
   SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
@@ -281,44 +282,14 @@ while (1)
   SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufGreen50p, sizeof(SPIBufGreen50p), 10);
   SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufBlue, sizeof(SPIBufBlue), 10);
 }
-  //SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufRed, sizeof(SPIBufRed), 1000);
 
-  HAL_Delay(500);
-
-  //SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufClear, sizeof(SPIBufClear), 1000);
-
-  HAL_Delay(500);
-
-  //SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufBlue, sizeof(SPIBufBlue), 1000);
-  //HAL_Delay(1000);
-  //SPI_Status = HAL_SPI_Transmit(&hspi3, SPIBufBlue, sizeof(SPIBufBlue), 1000);
-  uint8_t color = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-//	  if()
-//
-//		  switch (color) {
-//		case 1:
-//
-//			break;
-//		case 2:
-//
-//			break;
-//		case 3:
-//
-//					break;
-//		case 4:
-//
-//					break;
-//		case 5:
-//
-//					break;
-//		default:
-//			break;
+
 	}
   {
   /* USER CODE END WHILE */
@@ -387,7 +358,7 @@ void SystemClock_Config(void)
 }
 
 /* ADC1 init function */
-static void MX_ADC1_Init(void)
+void MX_ADC1_Init(void)
 {
 
   ADC_ChannelConfTypeDef sConfig;
@@ -424,7 +395,7 @@ static void MX_ADC1_Init(void)
 }
 
 /* SPI3 init function */
-static void MX_SPI3_Init(void)
+void MX_SPI3_Init(void)
 {
 
   hspi3.Instance = SPI3;
@@ -522,7 +493,7 @@ static void MX_SPI3_Init(void)
      PE0   ------> FMC_NBL0
      PE1   ------> FMC_NBL1
 */
-static void MX_GPIO_Init(void)
+void MX_GPIO_Init(void)
 {
 
   GPIO_InitTypeDef GPIO_InitStruct;

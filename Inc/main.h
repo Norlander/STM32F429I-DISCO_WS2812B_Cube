@@ -42,6 +42,12 @@
 
 /* USER CODE BEGIN Includes */
 
+/* Function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
+void MX_GPIO_Init(void);
+void MX_SPI3_Init(void);
+void MX_ADC1_Init(void);
+
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/

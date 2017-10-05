@@ -49,6 +49,9 @@
 ADC_HandleTypeDef hadc1;
 
 SPI_HandleTypeDef hspi3;
+DMA_HandleTypeDef hdma_spi3_tx;
+TIM_HandleTypeDef htim3;
+TIM_OC_InitTypeDef hoctim3;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -63,6 +66,24 @@ SPI_HandleTypeDef hspi3;
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
+void SetAllLedsGreenMain()
+{
+//	int i;
+//	for (i = 0; i < NR_OF_PIXELS_IN_LED_STRIP; ++i) {
+//		HAL_SPI_Transmit(hspi, pData, sizeof(pData), 10);
+//	}
+	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+}
+
 
 
 void fillSPIBuf(void);
@@ -74,6 +95,7 @@ int main(void)
 
 	/* USER CODE BEGIN 1 */
 	uint8_t LEDState = OffState;
+	//HAL_StatusTypeDef HAL_Status = HAL_OK;
 	/* USER CODE END 1 */
 
 	/* MCU Configuration----------------------------------------------------------*/
@@ -89,18 +111,29 @@ int main(void)
 	SystemClock_Config();
 
 	/* USER CODE BEGIN SysInit */
+	volatile uint32_t clocks[6];
+	clocks[0] = SystemCoreClock;
+	clocks[1] = HAL_RCC_GetSysClockFreq();
+	clocks[2] = HAL_RCC_GetHCLKFreq();
+	clocks[3] = HAL_RCC_GetPCLK1Freq();
+	clocks[4] = HAL_RCC_GetPCLK2Freq();
+	clocks[5] = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_TIM);
+
 
 	/* USER CODE END SysInit */
 
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
+	MX_DMA_Init();
 	MX_SPI3_Init();
 	MX_ADC1_Init();
 
+
+
+	/* USER CODE BEGIN 2 */
 	BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_GPIO);
 	BSP_LED_Init(LED3);
-	/* USER CODE BEGIN 2 */
-
+	MX_TIM3_Init();
 	/* SPI3 running at 2.5MHz. This gives means a bit will be shifted out on MOSI-line every 0,4us.
 	 * A WS2812B ONE is  0,8us HI + 0,4us LO
 	 * A WS2812B ZERO is  0,4us HI + 0,8us LO
@@ -115,9 +148,77 @@ int main(void)
 	 * To control all colors (R-G-B) in the pixel 3 * 24bits = 72bits are needed.
 	 * uint8_t *SPIBuf[9] declared as global variable...
 	 */
-#define DELAY 1
+#define DELAY 100
 	//volatile HAL_StatusTypeDef SPI_Status;
 
+#ifdef SPI_VIA_DMA
+	HAL_Status = HAL_SPI_Transmit_DMA(&hspi3, SPIBufClear, sizeof(SPIBufClear));
+	HAL_Status = HAL_SPI_Transmit_DMA(&hspi3, SPIBufClear, sizeof(SPIBufClear));
+	HAL_Status = HAL_SPI_Transmit_DMA(&hspi3, SPIBufClear, sizeof(SPIBufClear));
+	HAL_Status = HAL_SPI_Transmit_DMA(&hspi3, SPIBufClear, sizeof(SPIBufClear));
+	HAL_Status = HAL_SPI_Transmit_DMA(&hspi3, SPIBufClear, sizeof(SPIBufClear));
+	HAL_Status = HAL_SPI_Transmit_DMA(&hspi3, SPIBufClear, sizeof(SPIBufClear));
+	HAL_Status = HAL_SPI_Transmit_DMA(&hspi3, SPIBufClear, sizeof(SPIBufClear));
+	HAL_Status = HAL_SPI_Transmit_DMA(&hspi3, SPIBufClear, sizeof(SPIBufClear));
+	HAL_Status = HAL_SPI_Transmit_DMA(&hspi3, SPIBufClear, sizeof(SPIBufClear));
+	HAL_Status = HAL_SPI_Transmit_DMA(&hspi3, SPIBufClear, sizeof(SPIBufClear));
+	HAL_Delay(DELAY);
+	HAL_SPI_Transmit_DMA(&hspi3, SPIBufRed, sizeof(SPIBufRed));
+	HAL_SPI_Transmit_DMA(&hspi3, SPIBufRed, sizeof(SPIBufRed));
+	HAL_SPI_Transmit_DMA(&hspi3, SPIBufRed, sizeof(SPIBufRed));
+	HAL_SPI_Transmit_DMA(&hspi3, SPIBufRed, sizeof(SPIBufRed));
+	HAL_SPI_Transmit_DMA(&hspi3, SPIBufRed, sizeof(SPIBufRed));
+	HAL_SPI_Transmit_DMA(&hspi3, SPIBufGreen, sizeof(SPIBufGreen));
+	HAL_SPI_Transmit_DMA(&hspi3, SPIBufGreen, sizeof(SPIBufGreen));
+	HAL_SPI_Transmit_DMA(&hspi3, SPIBufGreen, sizeof(SPIBufGreen));
+	HAL_SPI_Transmit_DMA(&hspi3, SPIBufGreen, sizeof(SPIBufGreen));
+	HAL_SPI_Transmit_DMA(&hspi3, SPIBufGreen, sizeof(SPIBufGreen));
+#else
+
+	SetAllLedsGreenMain();
+
+	HAL_Delay(DELAY);
+
+	SetAllLeds10callsRed();
+
+	HAL_Delay(DELAY);
+
+	SetAllLedsGreen();
+
+	HAL_Delay(DELAY);
+
+	ClearAllLeds();
+
+	HAL_Delay(DELAY);
+
+	SetAllLedsColor(SPIBufGreen);
+
+	HAL_Delay(DELAY);
+
+	SetAllLedsColor(SPIBufRed);
+
+	HAL_Delay(DELAY);
+
+	SetAllLedsColor(SPIBufBlue);
+
+	HAL_Delay(DELAY);
+
+	SetAllLedsColor(SPIBufClear);
+
+	HAL_Delay(DELAY);
+
+	ClearAllLeds();
+
+	HAL_Delay(DELAY);
+
+	LEDSiren();
+
+	HAL_Delay(DELAY);
+
+	ClearAllLeds();
+
+	HAL_Delay(DELAY);
+
 	HAL_SPI_Transmit(&hspi3, SPIBufClear, sizeof(SPIBufClear), 10);
 	HAL_SPI_Transmit(&hspi3, SPIBufClear, sizeof(SPIBufClear), 10);
 	HAL_SPI_Transmit(&hspi3, SPIBufClear, sizeof(SPIBufClear), 10);
@@ -194,14 +295,16 @@ int main(void)
 	HAL_SPI_Transmit(&hspi3, SPIBufClear, sizeof(SPIBufClear), 10);
 	HAL_SPI_Transmit(&hspi3, SPIBufClear, sizeof(SPIBufClear), 10);
 
-//	HAL_Delay(DELAY);
-//
-//	HAL_SPI_Transmit(&hspi3, &SPIBufReset, 1, 10);
+#endif
+
+	//	HAL_Delay(DELAY);
+	//
+	//	HAL_SPI_Transmit(&hspi3, &SPIBufReset, 1, 10);
 
 	HAL_Delay(DELAY);
 	//HAL_SPI_Transmit(&hspi3, SPIBufRed, sizeof(SPIBufRed), 10);
 	// Ger hard fault...
-	//SetAllLeds(&hspi3, SPIBufGreen);
+	SetAllLedsGreenMain();
 
 
 	while (1)
@@ -209,7 +312,7 @@ int main(void)
 
 		while( 0 == BSP_PB_GetState(BUTTON_KEY) )
 		{
-			// Do nothing!
+			HAL_GPIO_DeInit(GPIOB, GPIO_PIN_4);
 		}
 
 		HAL_Delay(100);
@@ -225,7 +328,7 @@ int main(void)
 
 		switch (LEDState) {
 		case RedState:
-			SetAllLeds(&hspi3, SPIBufGreen);
+			SetAllLedsGreenMain(&hspi3, SPIBufGreen);
 			break;
 		default:
 			break;
@@ -326,10 +429,70 @@ void MX_ADC1_Init(void)
 
 }
 
+/**
+ * Enable DMA controller clock
+ */
+void MX_DMA_Init(void)
+{
+	/* DMA controller clock enable */
+	__HAL_RCC_DMA1_CLK_ENABLE();
+
+	/* DMA interrupt init */
+	/* DMA1_Stream5_IRQn interrupt configuration */
+	HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	if (htim->Instance == TIM3) {
+		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_4);
+	}
+}
+
+void MX_TIM3_Init(void)
+{
+	__HAL_RCC_TIM3_CLK_ENABLE();
+
+	HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(TIM3_IRQn);
+
+	TIM_Base_InitTypeDef TIM3_InitStruct;
+	htim3.Instance = TIM3;
+	//htim3.Channel = HAL_TIM_ACTIVE_CHANNEL_1;
+	htim3.Init = TIM3_InitStruct;
+
+
+	/* TIM3 is attached to the TIMER APB1 bus/clock --> 80MHz */
+	/* TIM3 is counting at 20MHz when using 80/4... */
+	TIM3_InitStruct.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+	TIM3_InitStruct.CounterMode = TIM_COUNTERMODE_UP;
+	/* Alarm sounds should be running at ~3kHz
+	 * During each Hz a full period must be completed. That is the GPIO port must toggle on off.
+	 * To achieve this the timer should run twice the speed of 3kHz --> 6 kHz.
+	 * 20MHz / 6kHz --> D05 (+-1?) */
+	TIM3_InitStruct.Period = 0x1;
+	TIM3_InitStruct.Prescaler = 0x0;/*? ...No need to divide the prescaler, leave it at default! */
+	/* TIM3_InitStruct.RepetitionCounter = ? ...No need for a repetition counter event - yet! */
+	HAL_TIM_Base_Init(&htim3);
+	HAL_TIM_Base_Start_IT(&htim3);
+
+//	hoctim3.OCMode = TIM_OCMODE_TOGGLE;
+//	hoctim3.OCFastMode = TIM_OCFAST_DISABLE;
+//	hoctim3.OCPolarity = TIM_OCPOLARITY_HIGH;
+//	hoctim3.Pulse = 0xD04;
+//	HAL_TIM_OC_Init(&hoctim3);
+}
+
+
+void HAL_SYSTICK_Callback(void)
+{
+	//HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_4);
+}
+
 /* SPI3 init function */
 void MX_SPI3_Init(void)
 {
-
 	hspi3.Instance = SPI3;
 	hspi3.Init.Mode = SPI_MODE_MASTER;
 	hspi3.Init.Direction = SPI_DIRECTION_2LINES;
@@ -346,7 +509,6 @@ void MX_SPI3_Init(void)
 	{
 		_Error_Handler(__FILE__, __LINE__);
 	}
-
 }
 
 /** Configure pins as 
@@ -666,6 +828,13 @@ void MX_GPIO_Init(void)
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
 	GPIO_InitStruct.Alternate = GPIO_AF12_FMC;
+	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+	GPIO_InitStruct.Pin = GPIO_PIN_4;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+	//GPIO_InitStruct.Alternate = GPIO_AF2_TIM3;
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }

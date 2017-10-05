@@ -17,8 +17,9 @@ typedef enum
 	OffState
 } AllLEDStates;
 
+#define NR_OF_PIXELS_IN_LED_STRIP 10
 #define NROFSTATES 4
-
+#define RGB_BUFFER_SIZE 9
 
 uint8_t SPIBufGreen[9] = {
 		0b11011011, /* G */
@@ -124,6 +125,12 @@ uint8_t SPIBuf3White[27] = {
 
 uint8_t SPIBufReset = 0b1111101; // Reset package: Low voltage for 50us. 50us / 0.4us = 125bits of 0x0. --> 0b1111101.
 
-void SetAllLeds(SPI_HandleTypeDef *hspi, uint8_t *pData);
+void SetAllLedsColor(uint8_t *Color);
+void SetAllLedsGreen();
+void SetAllLeds10callsRed();
+void SetAllLeds2();
+void ClearAllLeds();
+void LEDSiren();
+//void SetAllLedsColor(uint8_t Color[9]);
 
 #endif /* LED_FUNCTIONS_H_ */

@@ -85,7 +85,7 @@ void SetAllLedsGreenMain()
 }
 
 
-
+volatile uint32_t clocks[7];
 void fillSPIBuf(void);
 
 /* USER CODE END 0 */
@@ -111,7 +111,7 @@ int main(void)
 	SystemClock_Config();
 
 	/* USER CODE BEGIN SysInit */
-	volatile uint32_t clocks[6];
+
 	clocks[0] = SystemCoreClock;
 	clocks[1] = HAL_RCC_GetSysClockFreq();
 	clocks[2] = HAL_RCC_GetHCLKFreq();
@@ -457,26 +457,34 @@ void MX_TIM3_Init(void)
 	HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
 	HAL_NVIC_EnableIRQ(TIM3_IRQn);
 
-	TIM_Base_InitTypeDef TIM3_InitStruct;
-	htim3.Instance = TIM3;
-	//htim3.Channel = HAL_TIM_ACTIVE_CHANNEL_1;
-	htim3.Init = TIM3_InitStruct;
 
+	htim3.Instance = TIM3;
 
 	/* TIM3 is attached to the TIMER APB1 bus/clock --> 80MHz */
 	/* TIM3 is counting at 20MHz when using 80/4... */
-	TIM3_InitStruct.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-	TIM3_InitStruct.CounterMode = TIM_COUNTERMODE_UP;
+	htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV4;
+	htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
 	/* Alarm sounds should be running at ~3kHz
 	 * During each Hz a full period must be completed. That is the GPIO port must toggle on off.
 	 * To achieve this the timer should run twice the speed of 3kHz --> 6 kHz.
 	 * 20MHz / 6kHz --> D05 (+-1?) */
-	TIM3_InitStruct.Period = 0x1;
-	TIM3_InitStruct.Prescaler = 0x0;/*? ...No need to divide the prescaler, leave it at default! */
+	htim3.Init.Period = 0xa;
+	htim3.Init.Prescaler = 0xD05;/*? ...No need to divide the prescaler, leave it at default! */
 	/* TIM3_InitStruct.RepetitionCounter = ? ...No need for a repetition counter event - yet! */
-	HAL_TIM_Base_Init(&htim3);
-	HAL_TIM_Base_Start_IT(&htim3);
 
+	  if(HAL_TIM_Base_Init(&htim3) != HAL_OK)
+	  {
+	    /* Initialization Error */
+	    Error_Handler();
+	  }
+
+	  if(HAL_TIM_Base_Start_IT(&htim3) != HAL_OK)
+	  {
+	    /* Starting Error */
+	    Error_Handler();
+	  }
+
+	  clocks[6] = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_TIM);
 //	hoctim3.OCMode = TIM_OCMODE_TOGGLE;
 //	hoctim3.OCFastMode = TIM_OCFAST_DISABLE;
 //	hoctim3.OCPolarity = TIM_OCPOLARITY_HIGH;

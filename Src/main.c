@@ -51,6 +51,9 @@ ADC_HandleTypeDef hadc1;
 SPI_HandleTypeDef hspi3;
 DMA_HandleTypeDef hdma_spi3_tx;
 TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim5;
+TIM_IC_InitTypeDef hictim5_1;
+TIM_IC_InitTypeDef hictim5_2;
 TIM_OC_InitTypeDef hoctim3;
 
 /* USER CODE BEGIN PV */
@@ -68,20 +71,20 @@ TIM_OC_InitTypeDef hoctim3;
 /* USER CODE BEGIN 0 */
 void SetAllLedsGreenMain()
 {
-//	int i;
-//	for (i = 0; i < NR_OF_PIXELS_IN_LED_STRIP; ++i) {
-//		HAL_SPI_Transmit(hspi, pData, sizeof(pData), 10);
-//	}
-	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
-	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
-	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
-	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
-	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
-	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
-	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
-	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
-	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
-	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+	int i;
+	for (i = 0; i < NR_OF_PIXELS_IN_LED_STRIP; ++i) {
+		HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+	}
+//	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+//	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+//	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+//	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+//	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+//	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+//	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+//	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+//	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
+//	HAL_SPI_Transmit(&hspi3, SPIBufGreen, sizeof(SPIBufGreen), 10);
 }
 
 
@@ -94,7 +97,7 @@ int main(void)
 {
 
 	/* USER CODE BEGIN 1 */
-	uint8_t LEDState = OffState;
+ 	uint8_t LEDState = OffState;
 	//HAL_StatusTypeDef HAL_Status = HAL_OK;
 	/* USER CODE END 1 */
 
@@ -125,7 +128,7 @@ int main(void)
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
 	MX_DMA_Init();
-	MX_SPI3_Init();
+//	MX_SPI3_Init();
 	MX_ADC1_Init();
 
 
@@ -134,6 +137,8 @@ int main(void)
 	BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_GPIO);
 	BSP_LED_Init(LED3);
 	MX_TIM3_Init();
+
+	MX_TIM5_Init();
 	/* SPI3 running at 2.5MHz. This gives means a bit will be shifted out on MOSI-line every 0,4us.
 	 * A WS2812B ONE is  0,8us HI + 0,4us LO
 	 * A WS2812B ZERO is  0,4us HI + 0,8us LO
@@ -490,6 +495,74 @@ void MX_TIM3_Init(void)
 //	hoctim3.OCPolarity = TIM_OCPOLARITY_HIGH;
 //	hoctim3.Pulse = 0xD04;
 //	HAL_TIM_OC_Init(&hoctim3);
+}
+
+void MX_TIM5_Init(void)
+{
+	__HAL_RCC_TIM5_CLK_ENABLE();
+
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+
+	HAL_NVIC_SetPriority(TIM5_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(TIM5_IRQn);
+
+	GPIO_InitTypeDef GPIOInitStruct;
+
+	GPIOInitStruct.Alternate = GPIO_AF2_TIM5;
+	GPIOInitStruct.Mode = GPIO_MODE_AF_PP;
+	GPIOInitStruct.Pin = GPIO_PIN_15;
+	GPIOInitStruct.Pull = GPIO_PULLDOWN;
+	GPIOInitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+
+	HAL_GPIO_Init(GPIOA, &GPIOInitStruct);
+
+
+	/* Timer 5 need to have a resolution enabling [0.1 - 0.01] ms precision
+	 * Choosing a Timer frequency of 100KHz should do the job*/
+
+	htim5.Instance = TIM5;
+
+	/* TIM5 is connected via APB1 bus/clock --> 80MHz */
+	/* TIM3 is counting at 20MHz when using 80/4... */
+	htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV4;
+	htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
+	/* The timer is now running at 20MHz
+	 * Need to find a prescaler for 100KHz.
+	 * 20MHz / 100 KHz --> PSC = 200 */
+	htim3.Init.Prescaler = 200;/*? ...No need to divide the prescaler, leave it at default! */
+	htim3.Init.Period = 0x1;
+
+
+	if (HAL_TIM_Base_Init(&htim5) != HAL_OK) {
+			Error_Handler();
+		}
+
+
+	hictim5_1.ICFilter = 0x0;
+	hictim5_1.ICPolarity = TIM_ICPOLARITY_RISING;
+	hictim5_1.ICPrescaler = TIM_ICPSC_DIV1;
+	hictim5_1.ICSelection = TIM_ICSELECTION_DIRECTTI;
+
+	if (HAL_TIM_IC_Init(&htim5) != HAL_OK) {
+			Error_Handler();
+		}
+
+	if (HAL_TIM_IC_ConfigChannel(&htim5, &hictim5_1, TIM_CHANNEL_1) != HAL_OK) {
+			Error_Handler();
+		}
+
+	if (HAL_TIM_IC_Start_IT(&htim5, TIM_CHANNEL_1) != HAL_OK) {
+			Error_Handler();
+		}
+}
+
+uint32_t TimeStampBuffer[1000];
+
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+{
+	static int i = 0;
+	TimeStampBuffer[i] = TIM5->CCR1;
+	i++;
 }
 
 

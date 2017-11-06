@@ -43,6 +43,7 @@
 extern ADC_HandleTypeDef hadc1;
 extern DMA_HandleTypeDef hdma_spi3_tx;
 extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim5;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
@@ -94,6 +95,12 @@ void TIM3_IRQHandler(void)
 {
 	HAL_TIM_IRQHandler(&htim3);
 }
+
+void TIM5_IRQHandler(void)
+{
+	HAL_TIM_IRQHandler(&htim5);
+}
+
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

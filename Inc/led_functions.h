@@ -17,7 +17,7 @@ typedef enum
 	OffState
 } AllLEDStates;
 
-#define NR_OF_PIXELS_IN_LED_STRIP 10
+#define NR_OF_PIXELS_IN_LED_STRIP 100
 #define NROFSTATES 4
 #define RGB_BUFFER_SIZE 9
 

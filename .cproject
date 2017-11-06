@@ -9,6 +9,8 @@
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
@@ -19,11 +21,7 @@
 							<option id="com.atollic.truestudio.toolchain_options.mcu.792737219" name="Microcontroller" superClass="com.atollic.truestudio.toolchain_options.mcu" useByScannerDiscovery="false" value="STM32F429ZI" valueType="string"/>
 							<option id="com.atollic.truestudio.toolchain_options.vendor.334160568" name="Vendor name" superClass="com.atollic.truestudio.toolchain_options.vendor" useByScannerDiscovery="false" value="STMicroelectronics" valueType="string"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.atollic.truestudio.exe.debug.toolchain.platform.2054752829" isAbstract="false" name="Debug platform" superClass="com.atollic.truestudio.exe.debug.toolchain.platform"/>
-							<builder buildPath="${workspace_loc:/STM32F429I-DISCO_WS2812B_Cube}/Debug" customBuilderProperties="toolChainpathType=1|toolChainpathString=C:\\Program Files (x86)\\Atollic\\TrueSTUDIO for ARM 8.1.0\\ARMTools\\bin|" id="com.atollic.truestudio.mbs.builder1.1222194476" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CDT Internal Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="com.atollic.truestudio.mbs.builder1">
-								<outputEntries>
-									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="Debug"/>
-								</outputEntries>
-							</builder>
+							<builder buildPath="${workspace_loc:/STM32F429I-DISCO_WS2812B_Cube}/Debug" customBuilderProperties="toolChainpathType=1|toolChainpathString=C:\\Program Files (x86)\\Atollic\\TrueSTUDIO for ARM 8.1.0\\ARMTools\\bin|" id="com.atollic.pctools.managedbuild.target.gnu.builder.base.702049224" superClass="com.atollic.pctools.managedbuild.target.gnu.builder.base"/>
 							<tool command="arm-atollic-eabi-gcc -c" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX} ${OUTPUT} ${INPUTS}" id="com.atollic.truestudio.exe.debug.toolchain.as.1545899283" name="Assembler" superClass="com.atollic.truestudio.exe.debug.toolchain.as">
 								<option id="com.atollic.truestudio.common_options.target.endianess.1608144567" name="Endianess" superClass="com.atollic.truestudio.common_options.target.endianess" useByScannerDiscovery="false" value="com.atollic.truestudio.common_options.target.endianess.little" valueType="enumerated"/>
 								<option id="com.atollic.truestudio.common_options.target.mcpu.286463162" name="Microcontroller" superClass="com.atollic.truestudio.common_options.target.mcpu" useByScannerDiscovery="false" value="STM32F429ZI" valueType="enumerated"/>
@@ -107,9 +105,6 @@
 							</tool>
 							<tool id="com.atollic.truestudio.exe.debug.toolchain.secoutput.839033486" name="Other" superClass="com.atollic.truestudio.exe.debug.toolchain.secoutput"/>
 							<tool id="com.atollic.truestudio.ar.base.1432366399" name="Archiver" superClass="com.atollic.truestudio.ar.base"/>
-							<tool id="com.atollic.truestudio.exe.debug.toolchain.unittest.1497055523" name="Unit test" superClass="com.atollic.truestudio.exe.debug.toolchain.unittest">
-								<option id="com.atollic.truestudio.mbs.unittest.suites.suites.1911752711" name="Suites" superClass="com.atollic.truestudio.mbs.unittest.suites.suites" useByScannerDiscovery="false" value="WS2812B_suite:;:true:;:C:\Users\ASW-MNO-Admin\git\STM32F429I-DISCO_WS2812B_Cube\tests\test_cases.c:;:true" valueType="string"/>
-							</tool>
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="com.atollic.truestudio.exe.debug.311825581.983937533" name="" rcbsApplicability="disable" resourcePath="nofile" toolsToInvoke="com.atollic.truestudio.exe.debug.toolchain.gcc.1836874447.1976695455">
@@ -238,7 +233,6 @@
 							</tool>
 							<tool id="com.atollic.truestudio.exe.release.toolchain.secoutput.839033486" name="Other" superClass="com.atollic.truestudio.exe.release.toolchain.secoutput"/>
 							<tool id="com.atollic.truestudio.ar.base.1212146958" name="Archiver" superClass="com.atollic.truestudio.ar.base"/>
-							<tool id="com.atollic.truestudio.exe.release.toolchain.unittest.520096869" name="Unit test" superClass="com.atollic.truestudio.exe.release.toolchain.unittest"/>
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="com.atollic.truestudio.exe.release.311825581.983937533" name="" rcbsApplicability="disable" resourcePath="nofile" toolsToInvoke="com.atollic.truestudio.exe.release.toolchain.gcc.1836874447.1976695455">
@@ -267,7 +261,7 @@
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="STM32F429I-DISCO_WS2812B_Cube"/>
+			<resource resourceType="PROJECT" workspacePath="/STM32F429I-DISCO_WS2812B_Cube"/>
 		</configuration>
 		<configuration configurationName="Release">
 			<resource resourceType="PROJECT" workspacePath="/STM32F429I-DISCO_WS2812B_Cube"/>

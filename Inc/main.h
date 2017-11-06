@@ -49,6 +49,7 @@ void MX_DMA_Init(void);
 void MX_SPI3_Init(void);
 void MX_ADC1_Init(void);
 void MX_TIM3_Init(void);
+void MX_TIM5_Init(void);
 
 /* USER CODE END Includes */
 

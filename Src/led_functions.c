@@ -12,7 +12,7 @@
 //#include "led_functions.h"
 
 /* Configure the number of Pixels used in your LED-strip */
-#define NR_OF_PIXELS_IN_LED_STRIP 10
+#define NR_OF_PIXELS_IN_LED_STRIP 100
 #define SPI_TIMEOUT
 #define NROFSTATES 4
 #define RGB_BUFFER_SIZE 9
